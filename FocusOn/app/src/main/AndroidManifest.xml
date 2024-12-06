@@ -13,6 +13,12 @@
         android:theme="@style/Theme.FocusOn"
         tools:targetApi="31">
         <activity
+            android:name=".LeaderboardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PerformanceReportActivity"
+            android:exported="false" />
+        <activity
             android:name=".TasksView"
             android:exported="false" />
         <activity
