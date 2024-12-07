@@ -13,16 +13,16 @@
         android:theme="@style/Theme.FocusOn"
         tools:targetApi="31">
         <activity
-            android:name=".LeaderboardActivity"
+            android:name=".views.LeaderboardActivity"
             android:exported="false" />
         <activity
-            android:name=".PerformanceReportActivity"
+            android:name=".views.PerformanceReportActivity"
             android:exported="false" />
         <activity
-            android:name=".TasksView"
+            android:name=".views.TasksActivity"
             android:exported="false" />
         <activity
-            android:name=".MainView"
+            android:name=".views.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
