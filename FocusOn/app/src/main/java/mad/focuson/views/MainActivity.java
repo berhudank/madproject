@@ -19,6 +19,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import mad.focuson.R;
+import mad.focuson.Task;
 import mad.focuson.interfaces.Views;
 import mad.focuson.presenters.MainActivityPresenter;
 
@@ -26,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements Views.MainActivit
     TextView txtTaskName;
     Chronometer timer;
     ProgressBar progressBar;
+    Task currentTask;
 
 
     @Override
@@ -43,6 +45,8 @@ public class MainActivity extends AppCompatActivity implements Views.MainActivit
 
         Listener listener = new Listener();
 
+        timer.setOnChronometerTickListener(presenter);
+
         LinearLayout bottomNavigation = findViewById(R.id.bottomNavigation);
         for (int i = 0; i < bottomNavigation.getChildCount(); i++) {
             bottomNavigation.getChildAt(i).setOnClickListener(listener);
@@ -51,6 +55,16 @@ public class MainActivity extends AppCompatActivity implements Views.MainActivit
         findViewById(R.id.btnSettings).setOnClickListener(listener);
 
 
+    }
+
+    @Override
+    public void setTask(Task task) {
+
+    }
+
+    @Override
+    public Task getTask() {
+        return null;
     }
 
     class Listener implements View.OnClickListener{
@@ -63,6 +77,10 @@ public class MainActivity extends AppCompatActivity implements Views.MainActivit
                     startActivity(new Intent(MainActivity.this, TasksActivity.class));
                 } else if (id == R.id.btnLeaderboard) {
                     startActivity(new Intent(MainActivity.this, LeaderboardActivity.class));
+                } else if (id == R.id.btnStartStop) {
+                    timer.start();
+
+
                 }
             }
         }
