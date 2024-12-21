@@ -1,13 +1,30 @@
 package mad.focuson;
 
-public class Task {
-    private String taskName;
-    private long time;
-    private long breakTime;
-    private int numberOfSession;
+import java.io.Serializable;
 
-    public void decrementTime(){
-        time--;
+public class Task implements Serializable {
+    private String taskName;
+    private long workDuration;
+    private long breakTime;
+    private int numberOfSessions;
+    private int sessionsLeft;
+    private long remainingWorkDuration;
+
+    public Task(long breakTime, int numberOfSessions, String taskName, long workDuration) {
+        this.breakTime = breakTime;
+        this.numberOfSessions = numberOfSessions;
+        this.taskName = taskName;
+        this.workDuration = workDuration;
+        this.remainingWorkDuration = workDuration;
+        sessionsLeft = numberOfSessions;
+    }
+
+    public boolean isFinished(){
+        return sessionsLeft == 0;
+    }
+
+    public void decrementRemainingWorkDuration(){
+        remainingWorkDuration -= 1000;
     }
 
     public String getTaskName() {
@@ -18,12 +35,16 @@ public class Task {
         this.taskName = taskName;
     }
 
-    public long getTime() {
-        return time;
+    public long getWorkDuration() {
+        return workDuration;
     }
 
-    public void setTime(long time) {
-        this.time = time;
+    public void setWorkDuration(long workDuration) {
+        this.workDuration = workDuration;
+    }
+
+    public long getRemainingWorkDuration() {
+        return remainingWorkDuration;
     }
 
     public long getBreakTime() {
@@ -34,11 +55,15 @@ public class Task {
         this.breakTime = breakTime;
     }
 
-    public int getNumberOfSession() {
-        return numberOfSession;
+    public int getNumberOfSessions() {
+        return numberOfSessions;
     }
 
-    public void setNumberOfSession(int numberOfSession) {
-        this.numberOfSession = numberOfSession;
+    public void setNumberOfSessions(int numberOfSessions) {
+        this.numberOfSessions = numberOfSessions;
+    }
+
+    public int getSessionsLeft() {
+        return sessionsLeft;
     }
 }

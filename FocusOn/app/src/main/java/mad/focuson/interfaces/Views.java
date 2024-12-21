@@ -4,8 +4,9 @@ import mad.focuson.Task;
 
 public interface Views {
     interface MainActivityView{
-        public void setTask(Task task);
-        public Task getTask();
+        void updateTaskName(String taskName);
+        void updateProgress(int progress);
+        void updateTimer(String time);
     }
     interface TasksActivityView{}
 }

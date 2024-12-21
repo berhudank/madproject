@@ -143,7 +143,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         >
         <ImageButton
-            android:id="@+id/imgBack"
+            android:id="@+id/imgBtnBack"
             android:layout_width="42dp"
             android:layout_height="30dp"
             android:layout_gravity="bottom"

@@ -12,17 +12,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
-
-import mad.focuson.Music;
-import mad.focuson.views.adapters.MyMusicRecyclerViewAdapter;
 import mad.focuson.R;
+import mad.focuson.views.adapters.MusicRecyclerViewAdapter;
+import mad.focuson.views.placeholder.PlaceholderContent;
 
 /**
  * A fragment representing a list of Items.
  */
 public class MusicFragment extends Fragment {
-    ArrayList<Music> musicList = new ArrayList<>();
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -69,7 +66,7 @@ public class MusicFragment extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MyMusicRecyclerViewAdapter(musicList));
+            recyclerView.setAdapter(new MusicRecyclerViewAdapter(PlaceholderContent.ITEMS));
         }
         return view;
     }

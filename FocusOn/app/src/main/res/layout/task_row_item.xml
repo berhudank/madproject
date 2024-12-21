@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center">
+
+    <!--<TextView
+        android:id="@+id/txtTaskId"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent" />-->
+    <ImageView
+        android:id="@+id/imgTaskStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_task" />
+    <TextView
+        android:id="@+id/txtTaskName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingHorizontal="@dimen/text_margin"
+        tools:text="Task Name"/>
+    <TextView
+        android:id="@+id/txtSessionInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:paddingHorizontal="@dimen/text_margin"
+        tools:text="2/4"/>
+    <ImageButton
+        android:id="@+id/imgBtnEditTask"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/text_margin"/>
+    <ImageButton
+        android:id="@+id/imgBtnSendTask"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/text_margin"/>
+
+
+</LinearLayout>

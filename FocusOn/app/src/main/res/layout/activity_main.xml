@@ -7,6 +7,66 @@
     android:layout_height="match_parent"
     tools:context=".views.MainActivity">
 
+    <Button
+        android:id="@+id/btnProfile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Profile"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <Button
+        android:id="@+id/btnSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Settings"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/taskGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@id/btnSettings"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigation">
+
+        <TextView
+            android:id="@+id/txtTaskName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="My Task" />
+
+        <TextView
+            android:id="@+id/txtTimer"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00"/>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:progress="0"/>
+
+        <Button
+            android:id="@+id/btnStartStop"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="StartStop" />
+
+    </LinearLayout>
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/musicFragmentContainerView"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/taskGroup"/>
+
     <LinearLayout
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
@@ -37,65 +97,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Tasks" />
-    </LinearLayout>
-
-    <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/musicFragmentContainerView"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/taskGroup"/>
-
-    <Button
-        android:id="@+id/btnProfile"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Profile"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
-        android:id="@+id/btnSettings"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Settings"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <LinearLayout
-        android:id="@+id/taskGroup"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical">
-
-
-        <TextView
-            android:id="@+id/txtTaskName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="My Task" />
-
-        <Chronometer
-            android:id="@+id/timer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:countDown="true"
-            android:format="%s:%s" />
-
-        <ProgressBar
-            android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <Button
-            android:id="@+id/btnStartStop"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="StartStop" />
-
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
