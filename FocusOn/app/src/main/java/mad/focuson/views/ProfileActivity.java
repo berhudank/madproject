@@ -1,34 +1,35 @@
 package mad.focuson.views;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.TextView;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import mad.focuson.R;
 
-public class LeaderboardActivity extends AppCompatActivity {
-
+public class ProfileActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.activity_leaderboard);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        setContentView(R.layout.activity_profile);
         
         // Enable back button in action bar
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setTitle("Leaderboard");
+            getSupportActionBar().setTitle("Profile");
         }
+        
+        // Initialize profile UI elements
+        TextView totalPomodoros = findViewById(R.id.txtTotalPomodoros);
+        TextView completedTasks = findViewById(R.id.txtCompletedTasks);
+        
+        // Load stats from SharedPreferences
+        SharedPreferences prefs = getSharedPreferences("FocusOn", Context.MODE_PRIVATE);
+        int pomodoroCount = prefs.getInt("pomodorosCompleted", 0);
+        totalPomodoros.setText(String.format("Total Pomodoros: %d", pomodoroCount));
     }
 
     @Override
@@ -46,4 +47,4 @@ public class LeaderboardActivity extends AppCompatActivity {
         super.onBackPressed();
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
     }
-}
+} 

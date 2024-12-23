@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="btnStartStop" type="id"/>
+    <item name="btnStop" type="id"/>
+    <item name="btnTasks" type="id"/>
+    <item name="btnLeaderboard" type="id"/>
+    <item name="btnProfile" type="id"/>
+    <item name="btnSettings" type="id"/>
+    <item name="txtTimer" type="id"/>
+    <item name="txtTaskName" type="id"/>
+</resources> 
