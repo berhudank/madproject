@@ -42,7 +42,7 @@ public class MainActivityPresenter implements ModelListener, View.OnClickListene
         }
         mainActivityView.updateTaskName(selectedTask.getTaskName());
         long workDuration = selectedTask.getWorkDuration()/1000;
-        String time = workDuration/60000 + ":" + (workDuration%60000)/1000;
+        String time = workDuration/60 + ":" + (workDuration%60);
         mainActivityView.updateTimer(time);
         mainActivityView.updateProgress(0);
         currentTask = selectedTask;
@@ -50,7 +50,7 @@ public class MainActivityPresenter implements ModelListener, View.OnClickListene
 
     // this needs to be run on another thread
     private void setNewTimer(long milliseconds){
-        countDownTimer = new CountDownTimer(milliseconds, 1000) {
+        new CountDownTimer(milliseconds, 1000) {
 
             public void onTick(long millisUntilFinished) {
                 //mTextField.setText("seconds remaining: " + millisUntilFinished / 1000);

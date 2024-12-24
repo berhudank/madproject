@@ -1,5 +1,8 @@
 package mad.focuson.views.adapters;
 
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +17,14 @@ import java.util.List;
 
 import mad.focuson.R;
 import mad.focuson.Task;
+import mad.focuson.interfaces.Views;
 
 public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerViewAdapter.ViewHolder> {
     private final List<Task> tasks;
-
-    public TaskRecyclerViewAdapter(List<Task> tasks) {
+    Views.TasksActivityView tasksActivityView;
+    public TaskRecyclerViewAdapter(List<Task> tasks, Views.TasksActivityView tasksActivityView) {
         this.tasks = tasks;
+        this.tasksActivityView = tasksActivityView;
     }
 
     @NonNull
@@ -38,14 +43,17 @@ public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerVi
         holder.mTaskStatusView.setImageResource(task.isFinished() ? R.drawable.ic_task_completed : R.drawable.ic_task);
 
         if(!task.isFinished()) {
+            holder.mSendButtonView.setVisibility(View.VISIBLE);
             holder.mSendButtonView.setImageResource(R.drawable.ic_send_task);
             holder.mSendButtonView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     // setResult() ... and finish
+                    tasksActivityView.returnResult(Activity.RESULT_OK, new Intent().putExtra("selectedTask", task));
                 }
             });
             if(task.getWorkDuration() == task.getRemainingWorkDuration()){
+                holder.mEditButtonView.setVisibility(View.VISIBLE);
                 holder.mEditButtonView.setImageResource(R.drawable.ic_edit_task);
                 holder.mEditButtonView.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -54,6 +62,10 @@ public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerVi
                     }
                 });
             }
+        }
+        else {
+            holder.mSendButtonView.setVisibility(View.INVISIBLE);
+            holder.mEditButtonView.setVisibility(View.INVISIBLE);
         }
     }
 
