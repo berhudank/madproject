@@ -50,7 +50,7 @@ public class MainActivityPresenter implements ModelListener, View.OnClickListene
 
     // this needs to be run on another thread
     private void setNewTimer(long milliseconds){
-        new CountDownTimer(milliseconds, 1000) {
+        countDownTimer = new CountDownTimer(milliseconds, 1000) {
 
             public void onTick(long millisUntilFinished) {
                 //mTextField.setText("seconds remaining: " + millisUntilFinished / 1000);
