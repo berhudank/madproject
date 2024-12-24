@@ -3,6 +3,8 @@ package mad.focuson.presenters;
 import android.os.CountDownTimer;
 import android.view.View;
 
+import java.util.ArrayList;
+
 import mad.focuson.Model;
 import mad.focuson.Task;
 import mad.focuson.interfaces.ModelListener;
@@ -15,51 +17,49 @@ public class MainActivityPresenter implements ModelListener, View.OnClickListene
     Task currentTask;
     CountDownTimer countDownTimer;
 
+
     public MainActivityPresenter(Views.MainActivityView mainActivityView){
         this.mainActivityView = mainActivityView;
         model = Model.getInstance();
+        model.setTasks(new ArrayList<>());
     }
 
-    @Override
     public void onClick(View v) {
-        if(currentTask != null){
-            if (countDownTimer != null){
+        if (currentTask != null) {
+            if (countDownTimer != null) {
                 stopTimer();
                 // maybe we can also notify the model here
-            }
-            else{
+            } else {
                 setNewTimer(currentTask.getRemainingWorkDuration());
                 startTimer();
             }
         }
-
     }
 
-    public void handleTask(Task selectedTask){
-        if(currentTask != null){
+    public void handleTask(Task selectedTask) {
+        if (currentTask != null) {
             stopTimer();
             // Send the state of the current task to the model
         }
         mainActivityView.updateTaskName(selectedTask.getTaskName());
-        long workDuration = selectedTask.getWorkDuration()/1000;
-        String time = workDuration/60 + ":" + (workDuration%60);
+        long workDuration = selectedTask.getWorkDuration() / 1000;
+        String time = workDuration / 60 + ":" + (workDuration % 60);
         mainActivityView.updateTimer(time);
         mainActivityView.updateProgress(0);
         currentTask = selectedTask;
     }
 
     // this needs to be run on another thread
-    private void setNewTimer(long milliseconds){
+    private void setNewTimer(long milliseconds) {
         countDownTimer = new CountDownTimer(milliseconds, 1000) {
 
             public void onTick(long millisUntilFinished) {
-                //mTextField.setText("seconds remaining: " + millisUntilFinished / 1000);
-                currentTask.decrementRemainingWorkDuration();
-                String remainingTime = millisUntilFinished/60000 + ":" + (millisUntilFinished%60000)/1000;
+                currentTask.setRemainingWorkDuration(millisUntilFinished); // Update remaining time
+                String remainingTime = millisUntilFinished / 60000 + ":" + (millisUntilFinished % 60000) / 1000;
                 mainActivityView.updateTimer(remainingTime);
-                //update progress
+                // update progress
                 mainActivityView.updateProgress(
-                        (int) ( (currentTask.getWorkDuration() - currentTask.getRemainingWorkDuration()) / (double) currentTask.getWorkDuration() * 100)
+                        (int) ((currentTask.getWorkDuration() - millisUntilFinished) / (double) currentTask.getWorkDuration() * 100)
                 );
             }
 
@@ -69,15 +69,15 @@ public class MainActivityPresenter implements ModelListener, View.OnClickListene
         };
     }
 
-    private void stopTimer(){
-        if(countDownTimer != null) {
+    private void stopTimer() {
+        if (countDownTimer != null) {
             countDownTimer.cancel();
             countDownTimer = null;
         }
     }
 
-    private void startTimer(){
-        if(countDownTimer != null) {
+    private void startTimer() {
+        if (countDownTimer != null) {
             countDownTimer.start();
         }
     }

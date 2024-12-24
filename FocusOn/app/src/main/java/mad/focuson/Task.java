@@ -1,6 +1,7 @@
 package mad.focuson;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
 
 public class Task implements Serializable {
     private String taskName;
@@ -9,15 +10,28 @@ public class Task implements Serializable {
     private int numberOfSessions;
     private int sessionsLeft;
     private long remainingWorkDuration;
+    private int remind;
+    private long deadline;
 
-    public Task(long breakTime, int numberOfSessions, String taskName, long workDuration) {
-        this.breakTime = breakTime;
-        this.numberOfSessions = numberOfSessions;
+    public Task(String taskName, long workDuration, long breakTime, int numberOfSessions, int remind, long deadline) {
         this.taskName = taskName;
         this.workDuration = workDuration;
-        this.remainingWorkDuration = workDuration;
+        this.breakTime = breakTime;
+        this.numberOfSessions = numberOfSessions;
+        this.remind = remind;
+        this.deadline = deadline;
+        remainingWorkDuration = workDuration;
         sessionsLeft = numberOfSessions;
     }
+
+//    public Task(long breakTime, int numberOfSessions, String taskName, long workDuration) {
+//        this.breakTime = breakTime;
+//        this.numberOfSessions = numberOfSessions;
+//        this.taskName = taskName;
+//        this.workDuration = workDuration;
+//        this.remainingWorkDuration = workDuration;
+//        sessionsLeft = numberOfSessions;
+//    }
 
     public boolean isFinished(){
         return sessionsLeft == 0;
@@ -65,5 +79,29 @@ public class Task implements Serializable {
 
     public int getSessionsLeft() {
         return sessionsLeft;
+    }
+
+    public void setSessionsLeft(int sessionsLeft) {
+        this.sessionsLeft = sessionsLeft;
+    }
+
+    public int getRemind() {
+        return remind;
+    }
+
+    public void setRemind(int remind) {
+        this.remind = remind;
+    }
+
+    public long getDeadline() {
+        return deadline;
+    }
+
+    public void setDeadline(long deadline) {
+        this.deadline = deadline;
+    }
+
+    public void setRemainingWorkDuration(long millisUntilFinished) {
+        remainingWorkDuration = millisUntilFinished;
     }
 }

@@ -59,6 +59,7 @@ public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerVi
                     @Override
                     public void onClick(View v) {
                         // start TaskSettingsFragment...
+                        tasksActivityView.sendToSettings(task);
                     }
                 });
             }

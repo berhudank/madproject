@@ -8,6 +8,7 @@ import mad.focuson.interfaces.ModelListener;
 public class Model {
     private static volatile Model INSTANCE = null;
     private static volatile ArrayList<ModelListener> modelListeners;
+    private ArrayList<Task> tasks = new ArrayList<>();
 
     // private constructor to prevent instantiation of the class
     private Model() {
@@ -32,5 +33,15 @@ public class Model {
         return INSTANCE;
     }
 
+    public ArrayList<Task> getTasks() {
+        return tasks;
+    }
 
+    public void setTasks(ArrayList<Task> tasks) {
+        this.tasks = tasks;
+    }
+
+    public void appendTask(Task task){
+        tasks.add(task);
+    }
 }
