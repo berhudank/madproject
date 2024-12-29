@@ -121,7 +121,7 @@ public class TasksActivity extends AppCompatActivity implements Views.TasksActiv
                 else {
                     TaskSettingsFragment tsf = (TaskSettingsFragment) fragment;
                     if (tsf.isAdded() && tsf.getView() != null) {
-                        tsf.sendTask();
+                        tsf.sendTask(); // make the fragment call getParentFragmentManager().setFragmentResult("task", result);
                         fm.popBackStack();
                         tasksListView.setVisibility(View.VISIBLE);
                     }

@@ -1,7 +1,7 @@
 package mad.focuson.views;
 
 import android.app.DatePickerDialog;
-import android.content.Context;
+import android.icu.util.DateInterval;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -9,9 +9,11 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.NumberPicker;
@@ -20,7 +22,9 @@ import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 import mad.focuson.R;
 import mad.focuson.Task;
@@ -38,17 +42,18 @@ public class TaskSettingsFragment extends Fragment {
 
     // TODO: Rename and change types of parameters
     private Task task;
-    Calendar calendar;
-    SimpleDateFormat dateFormat;
-    EditText editTaskName;
-    NumberPicker workDurationPicker;
-    NumberPicker breakDurationPicker;
-    NumberPicker sessionCountPicker;
-    EditText editDeadline;
-    ImageButton btnCalendar;
-    SwitchCompat switchDeadline;
-    SeekBar seekBarReminder;
-    TextView txtReminderDays;
+
+    private Calendar calendar;
+    private SimpleDateFormat dateFormat;
+    private EditText editTaskName;
+    private NumberPicker workDurationPicker;
+    private NumberPicker breakDurationPicker;
+    private NumberPicker sessionCountPicker;
+    private EditText editDeadline;
+    private ImageButton btnCalendar;
+    private SwitchCompat switchDeadline;
+    private SeekBar seekBarReminder;
+    private TextView txtReminderDays;
 
     public TaskSettingsFragment() {
         // Required empty public constructor
@@ -103,40 +108,75 @@ public class TaskSettingsFragment extends Fragment {
         // Setup NumberPickers
         workDurationPicker.setMinValue(1);
         workDurationPicker.setMaxValue(60);
-        workDurationPicker.setValue(25);
 
         breakDurationPicker.setMinValue(1);
         breakDurationPicker.setMaxValue(30);
-        breakDurationPicker.setValue(5);
 
         sessionCountPicker.setMinValue(1);
         sessionCountPicker.setMaxValue(10);
-        sessionCountPicker.setValue(1);
+
+
+        // TO-DO: Prevent user from entering invalid dates
+        // in the EditText
+        // Require a Task Name
+
+        dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 
         calendar = Calendar.getInstance();
-        dateFormat = new SimpleDateFormat("dd/MM/yy", Locale.getDefault());
+        // cannot choose any date before tomorrow
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
+
+        if(task != null){
+            editTaskName.setText(task.getTaskName());
+            workDurationPicker.setValue(task.getWorkDurationInMinutes());
+            breakDurationPicker.setValue(task.getBreakTimeInMinutes());
+            sessionCountPicker.setValue(task.getNumberOfSessions());
+            if(task.getDeadline() != 0){
+                calendar.setTimeInMillis(task.getDeadline());
+                editDeadline.setText(dateFormat.format(calendar.getTime()));
+            }
+            switchDeadline.setChecked(task.getDeadline() != 0);
+            seekBarReminder.setProgress(task.getRemind());
+        }
+        else{
+            workDurationPicker.setValue(1);
+            breakDurationPicker.setValue(1);
+            sessionCountPicker.setValue(1);
+        }
 
         // Setup deadline picker
-        btnCalendar.setOnClickListener(v -> {
-
-            DatePickerDialog datePickerDialog = new DatePickerDialog(
-                    requireContext(),
-                    (view_d, year, month, dayOfMonth) -> {
-                        calendar.set(year, month, dayOfMonth);
-                        editDeadline.setText(dateFormat.format(calendar.getTime()));
-                    },
-                    calendar.get(Calendar.YEAR),
-                    calendar.get(Calendar.MONTH),
-                    calendar.get(Calendar.DAY_OF_MONTH)
-            );
-            datePickerDialog.show();
+        // TO-DO: Dialog can be created only once,
+        // after that it could be updated using dialog.updateDate(...);
+        btnCalendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(
+                        TaskSettingsFragment.this.requireContext(),
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                                calendar.set(year, month, dayOfMonth);
+                                editDeadline.setText(dateFormat.format(calendar.getTime()));
+                                long diff = TimeUnit.MILLISECONDS.toDays(calendar.getTimeInMillis() - Calendar.getInstance().getTimeInMillis());
+                                seekBarReminder.setMax(diff < 5 ? (int) diff : 5); // limit seekBar based on the date chosen
+                            }
+                        },
+                        calendar.get(Calendar.YEAR),
+                        calendar.get(Calendar.MONTH),
+                        calendar.get(Calendar.DAY_OF_MONTH)
+                );
+                Calendar currentTime = Calendar.getInstance();
+                currentTime.add(Calendar.DAY_OF_MONTH , 1);
+                datePickerDialog.getDatePicker().setMinDate(currentTime.getTimeInMillis());
+                datePickerDialog.show();
+            }
         });
 
         // Setup reminder seekbar
         seekBarReminder.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                txtReminderDays.setText(progress + " days");
+                txtReminderDays.setText(progress != 0 ? progress + (progress != 1 ? " days" : " day") : "");
             }
 
             @Override
@@ -149,23 +189,11 @@ public class TaskSettingsFragment extends Fragment {
 
             }
 
+
         });
 
-        if(task != null){
-            editTaskName.setText(task.getTaskName());
-            workDurationPicker.setValue((int) task.getWorkDuration()/60000);
-            breakDurationPicker.setValue((int) task.getBreakTime()/60000);
-            sessionCountPicker.setValue(task.getSessionsLeft());
-            calendar.setTimeInMillis(task.getDeadline());
-            editDeadline.setText(dateFormat.format(calendar.getTime()));
-            switchDeadline.setChecked(task.getDeadline() != 0);
-            seekBarReminder.setProgress(task.getRemind());
-        }
 
 
-
-
-        //Toast.makeText(view.getContext(), "task: " + task, Toast.LENGTH_LONG).show();
     }
 
     // onAttach onDetach onDestroy
@@ -173,10 +201,10 @@ public class TaskSettingsFragment extends Fragment {
     public void sendTask(){
         Task newTask = new Task(
                 editTaskName.getText().toString(),
-                workDurationPicker.getValue(),
-                breakDurationPicker.getValue(),
+                workDurationPicker.getValue()*60000,
+                breakDurationPicker.getValue()*60000,
                 sessionCountPicker.getValue(),
-                seekBarReminder.getProgress(),
+                switchDeadline.isChecked() ? seekBarReminder.getProgress() : 0,
                 switchDeadline.isChecked() ? calendar.getTimeInMillis() : 0
         );
 

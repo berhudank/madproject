@@ -1,15 +1,17 @@
 package mad.focuson;
 
 import java.io.Serializable;
-import java.text.SimpleDateFormat;
 
 public class Task implements Serializable {
     private String taskName;
     private long workDuration;
     private long breakTime;
     private int numberOfSessions;
-    private int sessionsLeft;
+
     private long remainingWorkDuration;
+    private long remainingBreakTime;
+    private int remainingSessions;
+
     private int remind;
     private long deadline;
 
@@ -21,25 +23,17 @@ public class Task implements Serializable {
         this.remind = remind;
         this.deadline = deadline;
         remainingWorkDuration = workDuration;
-        sessionsLeft = numberOfSessions;
+        remainingSessions = numberOfSessions;
+        remainingBreakTime = breakTime;
     }
 
-//    public Task(long breakTime, int numberOfSessions, String taskName, long workDuration) {
-//        this.breakTime = breakTime;
-//        this.numberOfSessions = numberOfSessions;
-//        this.taskName = taskName;
-//        this.workDuration = workDuration;
-//        this.remainingWorkDuration = workDuration;
-//        sessionsLeft = numberOfSessions;
-//    }
-
     public boolean isFinished(){
-        return sessionsLeft == 0;
+        return remainingSessions == 0;
     }
 
     public void decrementRemainingWorkDuration(){
         remainingWorkDuration -= 1000;
-    }
+    } // this is slower than assigning
 
     public String getTaskName() {
         return taskName;
@@ -77,12 +71,12 @@ public class Task implements Serializable {
         this.numberOfSessions = numberOfSessions;
     }
 
-    public int getSessionsLeft() {
-        return sessionsLeft;
+    public int getRemainingSessions() {
+        return remainingSessions;
     }
 
-    public void setSessionsLeft(int sessionsLeft) {
-        this.sessionsLeft = sessionsLeft;
+    public void setRemainingSessions(int remainingSessions) {
+        this.remainingSessions = remainingSessions;
     }
 
     public int getRemind() {
@@ -104,4 +98,12 @@ public class Task implements Serializable {
     public void setRemainingWorkDuration(long millisUntilFinished) {
         remainingWorkDuration = millisUntilFinished;
     }
+
+    public int getWorkDurationInMinutes(){
+        return (int) workDuration/60000;
+    }
+    public int getBreakTimeInMinutes(){
+        return (int) breakTime/60000;
+    }
+
 }

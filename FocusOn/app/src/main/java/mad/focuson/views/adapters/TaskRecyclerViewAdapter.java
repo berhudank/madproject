@@ -2,7 +2,6 @@ package mad.focuson.views.adapters;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -39,7 +38,7 @@ public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerVi
         Task task = tasks.get(position);
         holder.mItem = task;
         holder.mTaskNameView.setText(task.getTaskName());
-        holder.mSessionInfoView.setText(task.getNumberOfSessions() - task.getSessionsLeft() + "/" + task.getNumberOfSessions());
+        holder.mSessionInfoView.setText(task.getNumberOfSessions() - task.getRemainingSessions() + "/" + task.getNumberOfSessions());
         holder.mTaskStatusView.setImageResource(task.isFinished() ? R.drawable.ic_task_completed : R.drawable.ic_task);
 
         if(!task.isFinished()) {

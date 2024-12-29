@@ -54,7 +54,8 @@
                 <NumberPicker
                     android:id="@+id/breakTimePicker"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -97,7 +98,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="dd / mm / yy"
+                android:hint="dd/mm/yyyy"
                 android:inputType="date" />
 
             <ImageButton
@@ -140,13 +141,13 @@
             <SeekBar
                 android:id="@+id/reminderSeekBar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:progress="0"/>
 
             <TextView
                 android:id="@+id/reminderDaysTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="3 days"
                 android:layout_gravity="end" />
         </LinearLayout>
 
