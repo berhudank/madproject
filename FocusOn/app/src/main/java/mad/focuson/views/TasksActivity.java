@@ -24,13 +24,14 @@ import java.util.ArrayList;
 import mad.focuson.Model;
 import mad.focuson.R;
 import mad.focuson.Task;
+import mad.focuson.interfaces.ModelListener;
 import mad.focuson.interfaces.Views;
 import mad.focuson.presenters.TasksActivityPresenter;
 import mad.focuson.views.adapters.TaskRecyclerViewAdapter;
 
-public class TasksActivity extends AppCompatActivity implements Views.TasksActivityView {
+public class TasksActivity extends AppCompatActivity implements Views.TasksActivityView, ModelListener {
     Button btnAddNewTask;
-    ImageButton imgBtnBack, imgBtnDelete;
+    ImageButton imgBtnBack;
     RecyclerView tasksListView;
     TasksActivityPresenter presenter;
     Task taskToEdit;
@@ -55,7 +56,6 @@ public class TasksActivity extends AppCompatActivity implements Views.TasksActiv
 
         btnAddNewTask = findViewById(R.id.btnAddNewTask);
         imgBtnBack = findViewById(R.id.imgBtnBack);
-        imgBtnDelete = findViewById(R.id.imgBtnDelete);
         tasksListView = findViewById(R.id.tasksListView);
 
 //        tasks.add(new Task("FinishedTask", 20000, 20000, 3, 0, 0));
@@ -148,4 +148,9 @@ public class TasksActivity extends AppCompatActivity implements Views.TasksActiv
         ft.commit();
     }
 
+    @Override
+    public void updateTaskList(ArrayList<Task> taskList) {
+        tasks = taskList;
+        tasksListView.getAdapter().notifyDataSetChanged();
+    }
 }

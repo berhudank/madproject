@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "740715018852",
+    "project_id": "focuson-a639c",
+    "storage_bucket": "focuson-a639c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:740715018852:android:34c159b958af72172abd71",
+        "android_client_info": {
+          "package_name": "mad.focuson"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC8_jYEoI83dsVVuf4VKniaXZ7DOANGb8Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

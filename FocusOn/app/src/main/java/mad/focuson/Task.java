@@ -3,6 +3,7 @@ package mad.focuson;
 import java.io.Serializable;
 
 public class Task implements Serializable {
+
     private String taskName;
     private long workDuration;
     private long breakTime;
@@ -49,6 +50,7 @@ public class Task implements Serializable {
 
     public void setWorkDuration(long workDuration) {
         this.workDuration = workDuration;
+        this.remainingWorkDuration = workDuration;
     }
 
     public long getRemainingWorkDuration() {
@@ -61,6 +63,7 @@ public class Task implements Serializable {
 
     public void setBreakTime(long breakTime) {
         this.breakTime = breakTime;
+        this.remainingBreakTime = breakTime;
     }
 
     public int getNumberOfSessions() {
@@ -69,6 +72,7 @@ public class Task implements Serializable {
 
     public void setNumberOfSessions(int numberOfSessions) {
         this.numberOfSessions = numberOfSessions;
+        this.remainingSessions = numberOfSessions;
     }
 
     public int getRemainingSessions() {
@@ -77,6 +81,10 @@ public class Task implements Serializable {
 
     public void setRemainingSessions(int remainingSessions) {
         this.remainingSessions = remainingSessions;
+    }
+
+    public void decrementRemainingSessions(){
+        remainingSessions--;
     }
 
     public int getRemind() {

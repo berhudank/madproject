@@ -41,6 +41,13 @@ public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerVi
         holder.mSessionInfoView.setText(task.getNumberOfSessions() - task.getRemainingSessions() + "/" + task.getNumberOfSessions());
         holder.mTaskStatusView.setImageResource(task.isFinished() ? R.drawable.ic_task_completed : R.drawable.ic_task);
 
+        holder.mDeleteButtonView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // Delete task from arraylist and database
+            }
+        });
+
         if(!task.isFinished()) {
             holder.mSendButtonView.setVisibility(View.VISIBLE);
             holder.mSendButtonView.setImageResource(R.drawable.ic_send_task);
@@ -81,6 +88,7 @@ public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerVi
         public final ImageView mTaskStatusView;
         public final ImageButton mEditButtonView;
         public final ImageButton mSendButtonView;
+        public final ImageButton mDeleteButtonView;
         public Task mItem;
 
         public ViewHolder(View view) {
@@ -91,6 +99,7 @@ public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerVi
             mTaskStatusView = view.findViewById(R.id.imgTaskStatus);
             mEditButtonView = view.findViewById(R.id.imgBtnEditTask);
             mSendButtonView = view.findViewById(R.id.imgBtnSendTask);
+            mDeleteButtonView = view.findViewById(R.id.imgBtnDeleteTask);
         }
 
 //        @Override

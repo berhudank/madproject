@@ -13,5 +13,6 @@ public interface Views {
     interface TasksActivityView{
         void returnResult(int resultCode, Intent intent);
         void sendToSettings(Task selectedTask);
+        //void deleteTask();
     }
 }

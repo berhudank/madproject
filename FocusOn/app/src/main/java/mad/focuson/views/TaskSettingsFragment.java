@@ -128,8 +128,8 @@ public class TaskSettingsFragment extends Fragment {
 
         if(task != null){
             editTaskName.setText(task.getTaskName());
-            workDurationPicker.setValue(task.getWorkDurationInMinutes());
-            breakDurationPicker.setValue(task.getBreakTimeInMinutes());
+            workDurationPicker.setValue((int)task.getWorkDuration()/1000);
+            breakDurationPicker.setValue((int) task.getBreakTime()/1000);
             sessionCountPicker.setValue(task.getNumberOfSessions());
             if(task.getDeadline() != 0){
                 calendar.setTimeInMillis(task.getDeadline());
@@ -201,8 +201,8 @@ public class TaskSettingsFragment extends Fragment {
     public void sendTask(){
         Task newTask = new Task(
                 editTaskName.getText().toString(),
-                workDurationPicker.getValue()*60000,
-                breakDurationPicker.getValue()*60000,
+                workDurationPicker.getValue()*1000,
+                breakDurationPicker.getValue()*1000,
                 sessionCountPicker.getValue(),
                 switchDeadline.isChecked() ? seekBarReminder.getProgress() : 0,
                 switchDeadline.isChecked() ? calendar.getTimeInMillis() : 0

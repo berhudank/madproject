@@ -23,18 +23,18 @@
         android:textAlignment="center"
 
         app:layout_constraintBottom_toBottomOf="@+id/imgBtnBack"
-        app:layout_constraintEnd_toStartOf="@+id/imgBtnDelete"
+        app:layout_constraintEnd_toStartOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imgBtnBack"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageButton
-        android:id="@+id/imgBtnDelete"
-        android:layout_width="27dp"
-        android:layout_height="30dp"
-        app:layout_constraintBottom_toBottomOf="@+id/txtTasks"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_delete" />
+<!--    <ImageButton-->
+<!--        android:id="@+id/imgBtnDelete"-->
+<!--        android:layout_width="27dp"-->
+<!--        android:layout_height="30dp"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/txtTasks"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:srcCompat="@drawable/ic_delete" />-->
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/tasksListView"

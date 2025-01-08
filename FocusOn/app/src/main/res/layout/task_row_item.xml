@@ -10,6 +10,12 @@
         android:id="@+id/txtTaskId"
         android:layout_width="wrap_content"
         android:layout_height="match_parent" />-->
+    <ImageButton
+        android:id="@+id/imgBtnDeleteTask"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/text_margin"
+        android:src="@drawable/ic_delete"/>
     <ImageView
         android:id="@+id/imgTaskStatus"
         android:layout_width="wrap_content"

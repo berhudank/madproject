@@ -41,7 +41,7 @@ public class Model {
         this.tasks = tasks;
     }
 
-    public void appendTask(Task task){
-        tasks.add(task);
+    public void updateTaskList(){
+        // TODO: UPDATE TASK USED IN MAIN ACTIVITY
     }
 }

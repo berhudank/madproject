@@ -3,6 +3,7 @@ package mad.focuson.views;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 
 import android.widget.Button;
@@ -16,15 +17,25 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
+
 import mad.focuson.R;
 import mad.focuson.Task;
 import mad.focuson.interfaces.Views;
 import mad.focuson.presenters.MainActivityPresenter;
+
 
 public class MainActivity extends AppCompatActivity implements Views.MainActivityView {
     TextView taskName;
@@ -51,6 +62,50 @@ public class MainActivity extends AppCompatActivity implements Views.MainActivit
         progressBar = findViewById(R.id.progressBar);
 
         presenter = new MainActivityPresenter(this);
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+/*
+        // add user to database
+
+        Map<String, Object> user = new HashMap<>();
+        user.put("name", "berho");
+
+        DocumentReference documentReference = db.collection("users").document();
+        documentReference.set(user)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("dbSuccess", "DocumentSnapshot added with ID: " + documentReference.getId());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("dbFailure", "Error adding document", e);
+                    }
+                });
+
+        // Add tasks to user
+        Map<String, Object> task = new HashMap<>();
+        task.put("taskName", "myTask");
+        task.put("duration", "4");
+
+        documentReference.collection("Tasks").document()
+                .set(task)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("dbSuccess", "DocumentSnapshot added with ID: " + documentReference.getId());
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w("dbFailure", "Error adding document", e);
+                    }
+                });
+
+*/
         Listener listener = new Listener();
 
         LinearLayout bottomNavigation = findViewById(R.id.bottomNavigation);

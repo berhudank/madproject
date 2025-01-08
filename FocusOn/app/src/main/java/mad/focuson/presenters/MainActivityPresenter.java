@@ -11,11 +11,13 @@ import mad.focuson.interfaces.ModelListener;
 import mad.focuson.interfaces.Views;
 
 
-public class MainActivityPresenter implements ModelListener, View.OnClickListener {
+public class MainActivityPresenter implements View.OnClickListener {
     Views.MainActivityView mainActivityView;
     Model model;
     Task currentTask;
     CountDownTimer countDownTimer;
+    boolean isBreak = false;
+
 
 
     public MainActivityPresenter(Views.MainActivityView mainActivityView){
@@ -64,7 +66,25 @@ public class MainActivityPresenter implements ModelListener, View.OnClickListene
             }
 
             public void onFinish() {
-                mainActivityView.updateTimer("Time's up!");
+                if(!isBreak) {
+                    currentTask.decrementRemainingSessions();
+                    if (!currentTask.isFinished()){
+                        setNewTimer(currentTask.getBreakTime());
+                        isBreak = true;
+                        mainActivityView.updateTaskName("Session is finished, it is break time");
+
+                    }
+                    else{
+                        mainActivityView.updateTaskName("Task finished");
+                        return;
+                    }
+                }
+                else {
+                    setNewTimer(currentTask.getWorkDuration());
+                    isBreak = false;
+                    mainActivityView.updateTaskName("Break finished, new session has started");
+                }
+                startTimer();
             }
         };
     }
