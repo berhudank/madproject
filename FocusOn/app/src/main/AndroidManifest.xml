@@ -22,6 +22,10 @@
             android:name=".views.TasksActivity"
             android:exported="false" />
         <activity
+            android:name=".views.ThemeSelectionActivity"
+            android:label="Theme Selection"
+            />
+        <activity
             android:name=".views.MainActivity"
             android:exported="true">
             <intent-filter>

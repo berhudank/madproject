@@ -21,6 +21,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentResultListener;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -28,6 +31,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import mad.focuson.R;
 import mad.focuson.Task;
@@ -39,8 +43,22 @@ public class MainActivity extends AppCompatActivity implements Views.MainActivit
     TextView taskName;
     TextView timer;
     ProgressBar progressBar;
+    boolean isFragmentVisible = false;
 
     MainActivityPresenter presenter;
+
+    ArrayList<Integer> themes = new ArrayList<>(
+            Arrays.asList(
+                    R.drawable.theme1,
+                    R.drawable.theme2
+                    /*R.drawable.theme3,
+                    R.drawable.theme4,
+                    R.drawable.theme5,
+                    R.drawable.theme6,
+                    R.drawable.theme7,
+                    R.drawable.theme8,
+                    R.drawable.theme9,
+                    R.drawable.theme10*/));
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,6 +69,16 @@ public class MainActivity extends AppCompatActivity implements Views.MainActivit
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
+        });
+
+        FragmentManager fm = getSupportFragmentManager();
+
+        fm.setFragmentResultListener("response", this, new FragmentResultListener() {
+                    @Override
+                    public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
+                        int selectedTheme=result.getInt("selectedTheme", -1);
+                        findViewById(R.id.main).setBackgroundResource(selectedTheme);
+                    }
         });
 
         taskName = findViewById(R.id.txtTaskName);
@@ -116,11 +144,25 @@ public class MainActivity extends AppCompatActivity implements Views.MainActivit
                     launcher.launch(new Intent(MainActivity.this, TasksActivity.class));
                 } else if (id == R.id.btnLeaderboard) {
                     startActivity(new Intent(MainActivity.this, LeaderboardActivity.class));
+                } else if (id==R.id.btnTheme) {
+                    FragmentManager fm = getSupportFragmentManager();
+                    if (!isFragmentVisible){
+                        findViewById(R.id.fragmentContainerView).setVisibility(View.VISIBLE);
+                        FragmentTransaction ft = fm.beginTransaction();
+                        ft.add(R.id.fragmentContainerView, ThemeSelectionFragment.newInstance(themes), "themes");
+                        ft.commit();
+                        isFragmentVisible = true;
+                    }else {
+                        fm.popBackStack();
+                        fm.beginTransaction()
+                                .remove(fm.findFragmentByTag("themes"))
+                                .commit();
+                        isFragmentVisible = false;
+                        findViewById(R.id.fragmentContainerView).setVisibility(View.INVISIBLE);
+                    }
                 }
                 // for other activities
             }
         }
     }
-
-
 }

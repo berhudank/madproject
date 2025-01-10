@@ -1,6 +1,7 @@
 package mad.focuson.views;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,6 +24,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -32,6 +34,7 @@ import com.google.firebase.firestore.SetOptions;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 
 import mad.focuson.R;
 import mad.focuson.Task;
@@ -69,28 +72,16 @@ public class TasksActivity extends AppCompatActivity implements Views.TasksActiv
         });
 
 
+
+
+        tasksListView.setLayoutManager(new LinearLayoutManager(TasksActivity.this));
+        tasksListView.setAdapter(new TaskRecyclerViewAdapter(tasks, this));
+
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection("users").document("ali").collection("tasks")
-                .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
-                        if(task.isSuccessful()){
-                            for (QueryDocumentSnapshot document: task.getResult()) {
-                                Log.d("success", document.getId() + "=>" + document.getData());
-                                Task userTask = document.toObject(Task.class);
-                                tasks.add(userTask);
-                            }
-                            tasksListView.setLayoutManager(new LinearLayoutManager(TasksActivity.this));
-                            tasksListView.setAdapter(new TaskRecyclerViewAdapter(tasks, TasksActivity.this));
 
-                        }
-                        else {
-                            Log.w("error", "Error getting documents", task.getException());
-                        }
-                    }
-                });
+        CollectionReference ref = db.collection("users").document("ali").collection("tasks");
+        new DatabaseAcess().execute(ref);
 
 
         FragmentManager fm = getSupportFragmentManager();
@@ -226,5 +217,43 @@ public class TasksActivity extends AppCompatActivity implements Views.TasksActiv
         ft.addToBackStack(null);
         tasksListView.setVisibility(View.INVISIBLE);
         ft.commit();
+    }
+
+    private class DatabaseAcess extends AsyncTask<CollectionReference, Void, ArrayList<Task>>{
+
+        protected ArrayList<Task> doInBackground(CollectionReference... refs) {
+            ArrayList<Task> fetchedTasks = new ArrayList<>();
+            CountDownLatch latch = new CountDownLatch(1); // Initialize the latch with a count of 1
+
+            refs[0].get()
+                    .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
+                            if (task.isSuccessful()) {
+                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                    Log.d("success", document.getId() + " => " + document.getData());
+                                    Task userTask = document.toObject(Task.class);
+                                    fetchedTasks.add(userTask);
+                                }
+                            } else {
+                                Log.w("error", "Error getting documents", task.getException());
+                            }
+                            latch.countDown(); // Decrease the latch count when done
+                        }
+                    });
+
+            try {
+                latch.await(); // Wait until the latch count reaches 0
+            } catch (InterruptedException e) {
+                Log.e("error", "Latch interrupted", e);
+            }
+
+            return fetchedTasks;
+        }
+
+        protected void onPostExecute(ArrayList<Task> tasks) {
+            TasksActivity.this.tasks.addAll(tasks);
+            tasksListView.getAdapter().notifyDataSetChanged();
+        }
     }
 }
