@@ -12,6 +12,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.List;
 
 import mad.focuson.R;
@@ -45,6 +47,12 @@ public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerVi
             @Override
             public void onClick(View view) {
                 // Delete task from arraylist and database
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                db.collection("users").document("ali").collection("tasks").document(task.getTaskId())
+                        .delete();
+                tasks.remove(task); // TODO: THIS SEEMS PROBLEMATIC
+                TaskRecyclerViewAdapter.this.notifyItemRemoved(position);
+                tasksActivityView.detachTask();
             }
         });
 
@@ -55,7 +63,7 @@ public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerVi
                 @Override
                 public void onClick(View v) {
                     // setResult() ... and finish
-                    tasksActivityView.returnResult(Activity.RESULT_OK, new Intent().putExtra("selectedTask", task));
+                    tasksActivityView.returnResult(Activity.RESULT_OK, new Intent().putExtra("selectedTask", task).putExtra("response", "select"));
                 }
             });
             if(task.getWorkDuration() == task.getRemainingWorkDuration()){

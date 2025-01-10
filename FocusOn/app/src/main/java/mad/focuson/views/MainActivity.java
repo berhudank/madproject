@@ -10,7 +10,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.result.ActivityResult;
@@ -23,13 +22,12 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.DocumentReference;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
 
 import mad.focuson.R;
 import mad.focuson.Task;
@@ -43,8 +41,6 @@ public class MainActivity extends AppCompatActivity implements Views.MainActivit
     ProgressBar progressBar;
 
     MainActivityPresenter presenter;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,49 +59,6 @@ public class MainActivity extends AppCompatActivity implements Views.MainActivit
 
         presenter = new MainActivityPresenter(this);
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-/*
-        // add user to database
-
-        Map<String, Object> user = new HashMap<>();
-        user.put("name", "berho");
-
-        DocumentReference documentReference = db.collection("users").document();
-        documentReference.set(user)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("dbSuccess", "DocumentSnapshot added with ID: " + documentReference.getId());
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("dbFailure", "Error adding document", e);
-                    }
-                });
-
-        // Add tasks to user
-        Map<String, Object> task = new HashMap<>();
-        task.put("taskName", "myTask");
-        task.put("duration", "4");
-
-        documentReference.collection("Tasks").document()
-                .set(task)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d("dbSuccess", "DocumentSnapshot added with ID: " + documentReference.getId());
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w("dbFailure", "Error adding document", e);
-                    }
-                });
-
-*/
         Listener listener = new Listener();
 
         LinearLayout bottomNavigation = findViewById(R.id.bottomNavigation);
@@ -140,7 +93,12 @@ public class MainActivity extends AppCompatActivity implements Views.MainActivit
             public void onActivityResult(ActivityResult result) {
                 if (result.getResultCode() == Activity.RESULT_OK) {
                     if(result.getData() != null) {
-                        presenter.handleTask((Task) result.getData().getSerializableExtra("selectedTask"));
+                        String response = result.getData().getStringExtra("response");
+                        if(response.equals("select")) {
+                            presenter.handleTask((Task) result.getData().getSerializableExtra("selectedTask"));
+                        } else if (response.equals("delete")) {
+                            presenter.detachCurrentTask();
+                        }
                     }
                 }
             }

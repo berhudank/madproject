@@ -1,36 +1,38 @@
 package mad.focuson.presenters;
 
 import android.os.CountDownTimer;
+import android.util.Log;
 import android.view.View;
 
-import java.util.ArrayList;
+import androidx.annotation.NonNull;
 
-import mad.focuson.Model;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
+
+import java.util.Map;
+
 import mad.focuson.Task;
-import mad.focuson.interfaces.ModelListener;
 import mad.focuson.interfaces.Views;
 
 
 public class MainActivityPresenter implements View.OnClickListener {
     Views.MainActivityView mainActivityView;
-    Model model;
     Task currentTask;
     CountDownTimer countDownTimer;
     boolean isBreak = false;
 
 
-
     public MainActivityPresenter(Views.MainActivityView mainActivityView){
         this.mainActivityView = mainActivityView;
-        model = Model.getInstance();
-        model.setTasks(new ArrayList<>());
     }
 
     public void onClick(View v) {
         if (currentTask != null) {
             if (countDownTimer != null) {
                 stopTimer();
-                // maybe we can also notify the model here
             } else {
                 setNewTimer(currentTask.getRemainingWorkDuration());
                 startTimer();
@@ -39,9 +41,9 @@ public class MainActivityPresenter implements View.OnClickListener {
     }
 
     public void handleTask(Task selectedTask) {
+        isBreak = false;
         if (currentTask != null) {
             stopTimer();
-            // Send the state of the current task to the model
         }
         mainActivityView.updateTaskName(selectedTask.getTaskName());
         long workDuration = selectedTask.getWorkDuration() / 1000;
@@ -68,11 +70,25 @@ public class MainActivityPresenter implements View.OnClickListener {
             public void onFinish() {
                 if(!isBreak) {
                     currentTask.decrementRemainingSessions();
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+                    db.collection("users").document("ali").collection("tasks").document(currentTask.getTaskId())
+                            .update("remainingSessions", currentTask.getRemainingSessions())
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    Log.d("success", "Task updated successfully!");
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.w("error", "Error updating task: " + e.getMessage());
+                                }
+                            });
                     if (!currentTask.isFinished()){
                         setNewTimer(currentTask.getBreakTime());
                         isBreak = true;
                         mainActivityView.updateTaskName("Session is finished, it is break time");
-
                     }
                     else{
                         mainActivityView.updateTaskName("Task finished");
@@ -102,4 +118,11 @@ public class MainActivityPresenter implements View.OnClickListener {
         }
     }
 
+    public void detachCurrentTask() {
+        stopTimer();
+        currentTask = null;
+        mainActivityView.updateTaskName("");
+        mainActivityView.updateTimer("00:00");
+        mainActivityView.updateProgress(0);
+    }
 }

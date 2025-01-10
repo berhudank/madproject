@@ -2,6 +2,7 @@ package mad.focuson.views;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -19,25 +20,31 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 
-import mad.focuson.Model;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
 import mad.focuson.R;
 import mad.focuson.Task;
-import mad.focuson.interfaces.ModelListener;
 import mad.focuson.interfaces.Views;
-import mad.focuson.presenters.TasksActivityPresenter;
 import mad.focuson.views.adapters.TaskRecyclerViewAdapter;
 
-public class TasksActivity extends AppCompatActivity implements Views.TasksActivityView, ModelListener {
+public class TasksActivity extends AppCompatActivity implements Views.TasksActivityView {
     Button btnAddNewTask;
     ImageButton imgBtnBack;
     RecyclerView tasksListView;
-    TasksActivityPresenter presenter;
     Task taskToEdit;
-    Model model;
 
-    ArrayList<Task> tasks;
+    ArrayList<Task> tasks = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,22 +57,41 @@ public class TasksActivity extends AppCompatActivity implements Views.TasksActiv
             return insets;
         });
 
-        model = Model.getInstance();
-        tasks = model.getTasks();
-        presenter = new TasksActivityPresenter(this);
-
         btnAddNewTask = findViewById(R.id.btnAddNewTask);
         imgBtnBack = findViewById(R.id.imgBtnBack);
         tasksListView = findViewById(R.id.tasksListView);
 
-//        tasks.add(new Task("FinishedTask", 20000, 20000, 3, 0, 0));
-//        for (int i = 0; i < 20; i++) {
-//            tasks.add(new Task("FinishedTask", 20000, 20000, 3, 0, 0));
-//        }
-//        tasks.add(new Task("FinishedTask", 20000, 20000, 3, 0, 0));
+        imgBtnBack.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
 
-        tasksListView.setLayoutManager(new LinearLayoutManager(this));
-        tasksListView.setAdapter(new TaskRecyclerViewAdapter(tasks, this));
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("users").document("ali").collection("tasks")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
+                        if(task.isSuccessful()){
+                            for (QueryDocumentSnapshot document: task.getResult()) {
+                                Log.d("success", document.getId() + "=>" + document.getData());
+                                Task userTask = document.toObject(Task.class);
+                                tasks.add(userTask);
+                            }
+                            tasksListView.setLayoutManager(new LinearLayoutManager(TasksActivity.this));
+                            tasksListView.setAdapter(new TaskRecyclerViewAdapter(tasks, TasksActivity.this));
+
+                        }
+                        else {
+                            Log.w("error", "Error getting documents", task.getException());
+                        }
+                    }
+                });
+
 
         FragmentManager fm = getSupportFragmentManager();
 
@@ -76,8 +102,28 @@ public class TasksActivity extends AppCompatActivity implements Views.TasksActiv
 
                 // Do something with the result.
                 if(taskToEdit == null){
-                    tasks.add((Task) bundle.getSerializable("newTask"));
+                    Task newTask = (Task) bundle.getSerializable("newTask");
+                    DocumentReference ref = db.collection("users").document("ali").collection("tasks").document();
+
+                    newTask.setTaskId(ref.getId());
+                    tasks.add(newTask);
                     tasksListView.getAdapter().notifyDataSetChanged(); // TO-DO: Think about other methods ... notifyiteminserted()...
+
+                    ref.set(newTask, SetOptions.merge())
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void unused) {
+                                    Log.d("success", "Task updated successfully!");
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.w("error", "Error updating task: " + e.getMessage());
+                                }
+                            });
+
+
                 }
                 else {
                     Task editedTask = (Task) bundle.getSerializable("newTask");
@@ -85,9 +131,37 @@ public class TasksActivity extends AppCompatActivity implements Views.TasksActiv
                     taskToEdit.setRemind(editedTask.getRemind());
                     taskToEdit.setTaskName(editedTask.getTaskName());
                     taskToEdit.setNumberOfSessions(editedTask.getNumberOfSessions());
+                    taskToEdit.setRemainingSessions(editedTask.getRemainingSessions());
                     taskToEdit.setBreakTime(editedTask.getBreakTime());
+                    taskToEdit.setRemainingBreakTime(editedTask.getRemainingBreakTime());
                     taskToEdit.setWorkDuration(editedTask.getWorkDuration());
+                    taskToEdit.setRemainingWorkDuration(editedTask.getRemainingWorkDuration());
                     tasksListView.getAdapter().notifyDataSetChanged();
+
+
+                    Map<String, Object> taskMap = new HashMap<>();
+                    taskMap.put("taskName", taskToEdit.getTaskName());
+                    taskMap.put("workDuration", taskToEdit.getWorkDuration());
+                    taskMap.put("breakTime", taskToEdit.getBreakTime());
+                    taskMap.put("numberOfSessions", taskToEdit.getNumberOfSessions());
+                    taskMap.put("remainingWorkDuration", taskToEdit.getRemainingWorkDuration());
+                    taskMap.put("remainingBreakTime", taskToEdit.getRemainingBreakTime());
+                    taskMap.put("remainingSessions", taskToEdit.getRemainingSessions());
+                    taskMap.put("remind", taskToEdit.getRemind());
+                    taskMap.put("deadline", taskToEdit.getDeadline());
+
+
+                    db.collection("users").document("ali").collection("tasks").document(taskToEdit.getTaskId())
+                            .update(taskMap)
+                            .addOnSuccessListener(aVoid -> {
+                                // Handle success
+                                Log.d("success", "Task updated successfully!");
+                            })
+                            .addOnFailureListener(e -> {
+                                // Handle failure
+                                Log.w("error", "Error updating task: " + e.getMessage());
+                            });
+
                     taskToEdit = null;
                 }
             }
@@ -138,6 +212,12 @@ public class TasksActivity extends AppCompatActivity implements Views.TasksActiv
     }
 
     @Override
+    public void detachTask(){
+        setResult(RESULT_OK, new Intent().putExtra("response", "delete"));
+        finish();
+    }
+
+    @Override
     public void sendToSettings(Task selectedTask) {
         taskToEdit = selectedTask;
         FragmentManager fm = getSupportFragmentManager();
@@ -146,11 +226,5 @@ public class TasksActivity extends AppCompatActivity implements Views.TasksActiv
         ft.addToBackStack(null);
         tasksListView.setVisibility(View.INVISIBLE);
         ft.commit();
-    }
-
-    @Override
-    public void updateTaskList(ArrayList<Task> taskList) {
-        tasks = taskList;
-        tasksListView.getAdapter().notifyDataSetChanged();
     }
 }

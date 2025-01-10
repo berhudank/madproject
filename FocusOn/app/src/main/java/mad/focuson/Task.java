@@ -3,7 +3,7 @@ package mad.focuson;
 import java.io.Serializable;
 
 public class Task implements Serializable {
-
+    private String taskId;
     private String taskName;
     private long workDuration;
     private long breakTime;
@@ -16,6 +16,9 @@ public class Task implements Serializable {
     private int remind;
     private long deadline;
 
+    public Task(){
+
+    }
     public Task(String taskName, long workDuration, long breakTime, int numberOfSessions, int remind, long deadline) {
         this.taskName = taskName;
         this.workDuration = workDuration;
@@ -50,7 +53,6 @@ public class Task implements Serializable {
 
     public void setWorkDuration(long workDuration) {
         this.workDuration = workDuration;
-        this.remainingWorkDuration = workDuration;
     }
 
     public long getRemainingWorkDuration() {
@@ -63,7 +65,6 @@ public class Task implements Serializable {
 
     public void setBreakTime(long breakTime) {
         this.breakTime = breakTime;
-        this.remainingBreakTime = breakTime;
     }
 
     public int getNumberOfSessions() {
@@ -72,7 +73,6 @@ public class Task implements Serializable {
 
     public void setNumberOfSessions(int numberOfSessions) {
         this.numberOfSessions = numberOfSessions;
-        this.remainingSessions = numberOfSessions;
     }
 
     public int getRemainingSessions() {
@@ -114,4 +114,19 @@ public class Task implements Serializable {
         return (int) breakTime/60000;
     }
 
+    public String getTaskId() {
+        return taskId;
+    }
+
+    public void setTaskId(String taskId) {
+        this.taskId = taskId;
+    }
+
+    public long getRemainingBreakTime() {
+        return remainingBreakTime;
+    }
+
+    public void setRemainingBreakTime(long remainingBreakTime) {
+        this.remainingBreakTime = remainingBreakTime;
+    }
 }
