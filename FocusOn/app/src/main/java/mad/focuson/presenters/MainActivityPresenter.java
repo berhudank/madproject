@@ -1,5 +1,6 @@
 package mad.focuson.presenters;
 
+import android.media.MediaPlayer;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
@@ -16,6 +17,7 @@ import java.util.Map;
 
 import mad.focuson.Task;
 import mad.focuson.interfaces.Views;
+import mad.focuson.views.MainActivity;
 
 
 public class MainActivityPresenter implements View.OnClickListener {
@@ -52,6 +54,7 @@ public class MainActivityPresenter implements View.OnClickListener {
         mainActivityView.updateProgress(0);
         currentTask = selectedTask;
     }
+
 
     // this needs to be run on another thread
     private void setNewTimer(long milliseconds) {
@@ -107,6 +110,7 @@ public class MainActivityPresenter implements View.OnClickListener {
 
     private void stopTimer() {
         if (countDownTimer != null) {
+            mainActivityView.stopMusic();
             countDownTimer.cancel();
             countDownTimer = null;
         }
@@ -114,6 +118,7 @@ public class MainActivityPresenter implements View.OnClickListener {
 
     private void startTimer() {
         if (countDownTimer != null) {
+            mainActivityView.startMusic();
             countDownTimer.start();
         }
     }

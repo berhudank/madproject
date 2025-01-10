@@ -9,6 +9,9 @@ public interface Views {
         void updateTaskName(String taskName);
         void updateProgress(int progress);
         void updateTimer(String time);
+
+        void startMusic();
+        void stopMusic();
     }
     interface TasksActivityView{
         void returnResult(int resultCode, Intent intent);
