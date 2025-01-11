@@ -2,6 +2,7 @@ package mad.focuson.views;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
@@ -18,6 +19,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -33,6 +35,7 @@ import mad.focuson.R;
 import mad.focuson.Task;
 import mad.focuson.interfaces.Views;
 import mad.focuson.presenters.MainActivityPresenter;
+import mad.focuson.Settings;
 
 
 public class MainActivity extends AppCompatActivity implements Views.MainActivityView {
@@ -71,8 +74,6 @@ public class MainActivity extends AppCompatActivity implements Views.MainActivit
                     "music2"
                     ));
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,6 +97,7 @@ public class MainActivity extends AppCompatActivity implements Views.MainActivit
                 else if(music != -1) {
                     stopMusic();
                     selectedMusic = music;
+                    startMusic();
                 }
             }
         });
@@ -200,8 +202,10 @@ public class MainActivity extends AppCompatActivity implements Views.MainActivit
                 }
                 else if (id == R.id.btnBgMusic) {
                     showFragment(fm, MusicFragment.newInstance(musics, musicNames), "musics");
+                } else if (id== R.id.btnSettings) {
+                    startActivity(new Intent(MainActivity.this, Settings.class));
                 }
-                    // for other activities
+                // for other activities
             }
         }
 

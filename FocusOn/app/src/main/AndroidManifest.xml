@@ -13,6 +13,16 @@
         android:theme="@style/Theme.FocusOn"
         tools:targetApi="31">
         <activity
+            android:name=".Register"
+            android:exported="false" />
+        <activity
+            android:name=".Login"
+            android:exported="false" />
+        <activity
+            android:name=".Settings"
+            android:exported="false"
+            android:theme="@style/Theme.FocusOn" />
+        <activity
             android:name=".views.LeaderboardActivity"
             android:exported="false" />
         <activity
@@ -23,8 +33,7 @@
             android:exported="false" />
         <activity
             android:name=".views.ThemeSelectionActivity"
-            android:label="Theme Selection"
-            />
+            android:label="Theme Selection" />
         <activity
             android:name=".views.MainActivity"
             android:exported="true">
