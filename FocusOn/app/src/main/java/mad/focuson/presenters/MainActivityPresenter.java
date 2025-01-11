@@ -36,10 +36,11 @@ public class MainActivityPresenter implements View.OnClickListener {
     }
 
     public void onClick(View v) {
-        if (currentTask != null) {
+        if (currentTask != null && !currentTask.isFinished()) {
             if (countDownTimer != null) {
                 stopTimer();
             } else{
+
                 setNewTimer(currentTask.getRemainingWorkDuration());
                 startTimer();
             }
@@ -99,6 +100,7 @@ public class MainActivityPresenter implements View.OnClickListener {
                     }
                     else{
                         mainActivityView.updateTaskName("Task finished");
+                        mainActivityView.stopMusic();
                         currentTask.setTimestamp(Timestamp.now());
                         db.collection("users").document(currentuser).collection("tasks").document(currentTask.getTaskId())
                                 .update("timestamp", currentTask.getTimestamp())

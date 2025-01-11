@@ -55,7 +55,7 @@ public class LeaderboardActivity extends AppCompatActivity {
             }
         });
 
-        spinner = findViewById(R.id.spinner);
+        //spinner = findViewById(R.id.spinner);
         listView = findViewById(R.id.ranks);
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
