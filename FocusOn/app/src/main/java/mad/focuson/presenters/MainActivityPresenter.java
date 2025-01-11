@@ -1,26 +1,30 @@
 package mad.focuson.presenters;
 
-import android.media.MediaPlayer;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.NonNull;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.Timestamp;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import mad.focuson.Task;
 import mad.focuson.interfaces.Views;
-import mad.focuson.views.MainActivity;
 
 
 public class MainActivityPresenter implements View.OnClickListener {
+    String currentuserPath ="users/bthn";
+    String currentuser= "bthn";
     Views.MainActivityView mainActivityView;
     Task currentTask;
     CountDownTimer countDownTimer;
@@ -35,7 +39,7 @@ public class MainActivityPresenter implements View.OnClickListener {
         if (currentTask != null) {
             if (countDownTimer != null) {
                 stopTimer();
-            } else {
+            } else{
                 setNewTimer(currentTask.getRemainingWorkDuration());
                 startTimer();
             }
@@ -74,7 +78,7 @@ public class MainActivityPresenter implements View.OnClickListener {
                 if(!isBreak) {
                     currentTask.decrementRemainingSessions();
                     FirebaseFirestore db = FirebaseFirestore.getInstance();
-                    db.collection("users").document("ali").collection("tasks").document(currentTask.getTaskId())
+                    db.collection("users").document(currentuser).collection("tasks").document(currentTask.getTaskId())
                             .update("remainingSessions", currentTask.getRemainingSessions())
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
@@ -95,6 +99,75 @@ public class MainActivityPresenter implements View.OnClickListener {
                     }
                     else{
                         mainActivityView.updateTaskName("Task finished");
+                        currentTask.setTimestamp(Timestamp.now());
+                        db.collection("users").document(currentuser).collection("tasks").document(currentTask.getTaskId())
+                                .update("timestamp", currentTask.getTimestamp())
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void unused) {
+                                        Log.d("success", "Task updated successfully!");
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        Log.w("error", "Error updating task: " + e.getMessage());
+                                    }
+                                });
+                        db.collection("leaderboard").whereEqualTo("userId", currentuserPath)
+                                .get()
+                                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                    @Override
+                                    public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
+                                        if (task.isSuccessful()) {
+                                            if (task.getResult().isEmpty()) {
+                                                // Document does not exist, add a new document
+                                                // TODO: make 2 digits after decimal point
+                                                double newScore = currentTask.getWorkDuration() * currentTask.getNumberOfSessions() / 60.0;
+
+                                                Map<String, Object> newLeaderboardData = new HashMap<>();
+                                                newLeaderboardData.put("userId", db.document(currentuserPath));
+                                                newLeaderboardData.put("score", newScore);
+
+                                                db.collection("leaderboard")
+                                                        .add(newLeaderboardData) // Add a new document to the collection
+                                                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                                                            @Override
+                                                            public void onSuccess(DocumentReference documentReference) {
+                                                                Log.d("success", "New document added to leaderboard w.replace(\"users/\",\"\")ith ID: " + documentReference.getId());
+                                                            }
+                                                        })
+                                                        .addOnFailureListener(new OnFailureListener() {
+                                                            @Override
+                                                            public void onFailure(@NonNull Exception e) {
+                                                                Log.w("error", "Error adding new document: " + e.getMessage());
+                                                            }
+                                                        });
+                                            } else {
+                                                for (QueryDocumentSnapshot document : task.getResult()) {
+                                                    double newScore = ((double) document.getData().get("score")) + (currentTask.getWorkDuration() * currentTask.getNumberOfSessions() / 60.0);
+                                                    db.collection("leaderboard").document(document.getId())
+                                                            .update("score", newScore)
+                                                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                                                @Override
+                                                                public void onSuccess(Void unused) {
+                                                                    Log.d("success", "Score updated successfully!");
+                                                                }
+                                                            })
+                                                            .addOnFailureListener(new OnFailureListener() {
+                                                                @Override
+                                                                public void onFailure(@NonNull Exception e) {
+                                                                    Log.w("error", "Error updating score: " + e.getMessage());
+                                                                }
+                                                            });
+                                                    Log.d("success", document.getId() + " => " + document.getData());
+                                                }
+                                            }
+                                        } else {
+                                            Log.w("error", "Error getting documents", task.getException());
+                                        }
+                                    }
+                                });
                         return;
                     }
                 }

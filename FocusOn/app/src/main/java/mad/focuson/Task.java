@@ -1,5 +1,7 @@
 package mad.focuson;
 
+import com.google.firebase.Timestamp;
+
 import java.io.Serializable;
 
 public class Task implements Serializable {
@@ -8,7 +10,7 @@ public class Task implements Serializable {
     private long workDuration;
     private long breakTime;
     private int numberOfSessions;
-
+    private Timestamp timestamp;
     private long remainingWorkDuration;
     private long remainingBreakTime;
     private int remainingSessions;
@@ -120,6 +122,14 @@ public class Task implements Serializable {
 
     public void setTaskId(String taskId) {
         this.taskId = taskId;
+    }
+
+    public Timestamp getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Timestamp timestamp) {
+        this.timestamp = timestamp;
     }
 
     public long getRemainingBreakTime() {

@@ -91,12 +91,12 @@ public class MainActivity extends AppCompatActivity implements Views.MainActivit
             public void onFragmentResult(@NonNull String requestKey, @NonNull Bundle result) {
                 int theme = result.getInt("selectedTheme", -1);
                 int music = result.getInt("selectedMusic", -1);
-                if (theme != -1)
-                    findViewById(R.id.main).setBackgroundResource(theme);
-                else if(music != -1)
+                if (theme != -1){
+                    findViewById(R.id.main).setBackgroundResource(theme);}
+                else if(music != -1) {
                     stopMusic();
                     selectedMusic = music;
-
+                }
             }
         });
 

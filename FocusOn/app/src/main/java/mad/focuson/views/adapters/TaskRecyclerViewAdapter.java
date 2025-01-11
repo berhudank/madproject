@@ -21,6 +21,7 @@ import mad.focuson.Task;
 import mad.focuson.interfaces.Views;
 
 public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerViewAdapter.ViewHolder> {
+    String currentuser="bthn";
     private final List<Task> tasks;
     Views.TasksActivityView tasksActivityView;
     public TaskRecyclerViewAdapter(List<Task> tasks, Views.TasksActivityView tasksActivityView) {
@@ -48,7 +49,7 @@ public class TaskRecyclerViewAdapter extends RecyclerView.Adapter<TaskRecyclerVi
             public void onClick(View view) {
                 // Delete task from arraylist and database
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
-                db.collection("users").document("ali").collection("tasks").document(task.getTaskId())
+                db.collection("users").document(currentuser).collection("tasks").document(task.getTaskId())
                         .delete();
                 tasks.remove(task); // TODO: THIS SEEMS PROBLEMATIC
                 TaskRecyclerViewAdapter.this.notifyItemRemoved(position);
