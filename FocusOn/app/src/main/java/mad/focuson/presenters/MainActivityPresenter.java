@@ -116,7 +116,7 @@ public class MainActivityPresenter implements View.OnClickListener {
                                         Log.w("error", "Error updating task: " + e.getMessage());
                                     }
                                 });
-                        db.collection("leaderboard").whereEqualTo("userId", currentuserPath)
+                        db.collection("leaderboard").whereEqualTo("userId", db.document(currentuserPath))
                                 .get()
                                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                                     @Override
