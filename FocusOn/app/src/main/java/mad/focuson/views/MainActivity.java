@@ -2,7 +2,6 @@ package mad.focuson.views;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
@@ -19,7 +18,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -28,9 +26,12 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentResultListener;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import mad.focuson.ProfileActivity;
 import mad.focuson.R;
 import mad.focuson.Task;
 import mad.focuson.interfaces.Views;
@@ -42,7 +43,8 @@ public class MainActivity extends AppCompatActivity implements Views.MainActivit
     TextView taskName;
     TextView timer;
     ProgressBar progressBar;
-    boolean isFragmentVisible = false;
+    boolean keepMeLoggedIn = false;
+
 
     private MediaPlayer mediaPlayer;
     private int selectedMusic = -1;
@@ -84,6 +86,8 @@ public class MainActivity extends AppCompatActivity implements Views.MainActivit
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        keepMeLoggedIn = getIntent().getBooleanExtra("keepMeLoggedIn", true);
 
         FragmentManager fm = getSupportFragmentManager();
 
@@ -129,6 +133,13 @@ public class MainActivity extends AppCompatActivity implements Views.MainActivit
             mediaPlayer.release();
             mediaPlayer = null;
         }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(!keepMeLoggedIn)
+            FirebaseAuth.getInstance().signOut();
     }
 
     @Override
@@ -204,6 +215,8 @@ public class MainActivity extends AppCompatActivity implements Views.MainActivit
                     showFragment(fm, MusicFragment.newInstance(musics, musicNames), "musics");
                 } else if (id== R.id.btnSettings) {
                     startActivity(new Intent(MainActivity.this, Settings.class));
+                } else if (id == R.id.btnProfile) {
+                    startActivity(new Intent(MainActivity.this, ProfileActivity.class));
                 }
                 // for other activities
             }

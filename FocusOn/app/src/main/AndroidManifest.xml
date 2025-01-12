@@ -13,11 +13,21 @@
         android:theme="@style/Theme.FocusOn"
         tools:targetApi="31">
         <activity
-            android:name=".Register"
+            android:name=".ProfileActivity"
             android:exported="false" />
         <activity
-            android:name=".Login"
+            android:name=".RegisterActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".LoginActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".Settings"
             android:exported="false"
@@ -32,17 +42,8 @@
             android:name=".views.TasksActivity"
             android:exported="false" />
         <activity
-            android:name=".views.ThemeSelectionActivity"
-            android:label="Theme Selection" />
-        <activity
             android:name=".views.MainActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:exported="true"></activity>
     </application>
 
 </manifest>

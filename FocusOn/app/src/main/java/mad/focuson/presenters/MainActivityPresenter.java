@@ -10,6 +10,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.Timestamp;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
@@ -23,8 +25,8 @@ import mad.focuson.interfaces.Views;
 
 
 public class MainActivityPresenter implements View.OnClickListener {
-    String currentuserPath ="users/bthn";
-    String currentuser= "bthn";
+    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+    String currentuserPath = "users/" + user.getUid();
     Views.MainActivityView mainActivityView;
     Task currentTask;
     CountDownTimer countDownTimer;
@@ -79,7 +81,7 @@ public class MainActivityPresenter implements View.OnClickListener {
                 if(!isBreak) {
                     currentTask.decrementRemainingSessions();
                     FirebaseFirestore db = FirebaseFirestore.getInstance();
-                    db.collection("users").document(currentuser).collection("tasks").document(currentTask.getTaskId())
+                    db.collection("users").document(user.getUid()).collection("tasks").document(currentTask.getTaskId())
                             .update("remainingSessions", currentTask.getRemainingSessions())
                             .addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
@@ -102,7 +104,7 @@ public class MainActivityPresenter implements View.OnClickListener {
                         mainActivityView.updateTaskName("Task finished");
                         mainActivityView.stopMusic();
                         currentTask.setTimestamp(Timestamp.now());
-                        db.collection("users").document(currentuser).collection("tasks").document(currentTask.getTaskId())
+                        db.collection("users").document(user.getUid()).collection("tasks").document(currentTask.getTaskId())
                                 .update("timestamp", currentTask.getTimestamp())
                                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override

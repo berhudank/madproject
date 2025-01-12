@@ -17,6 +17,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -27,6 +28,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import mad.focuson.R;
@@ -66,20 +68,46 @@ public class LeaderboardActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<QuerySnapshot> task) {
                         if (task.isSuccessful()) {
+                            List<Task<DocumentSnapshot>> tasks = new ArrayList<>();
+                            List<Map<String, Object>> tempLeaderboard = new ArrayList<>();
+
                             for (QueryDocumentSnapshot document : task.getResult()) {
                                 Map<String, Object> user = new HashMap<>();
-                                // TODO: improve: reduce it to one table
                                 user.put("score", document.getData().get("score"));
-                                user.put("userId", ((DocumentReference) document.getData().get("userId")).getPath().replace("users/",""));
-                                leaderboard.add(user);
-                                Log.d("success", document.getId() + " => " + document.getData());
+
+                                // Add the task for fetching username
+                                DocumentReference userRef = (DocumentReference) document.getData().get("userId");
+                                tasks.add(userRef.get());
+
+                                // Keep track of the user map for merging later
+                                tempLeaderboard.add(user);
                             }
-                           // notifyDatasetChanged
-                            ((LeaderboardAdapter) listView.getAdapter()).notifyDataSetChanged();
+
+                            // Wait for all tasks to complete
+                            Tasks.whenAllComplete(tasks).addOnCompleteListener(allTasks -> {
+                                for (int i = 0; i < tasks.size(); i++) {
+                                    Task<DocumentSnapshot> usernameTask = tasks.get(i);
+
+                                    if (usernameTask.isSuccessful() && usernameTask.getResult().exists()) {
+                                        // Get the username and update the leaderboard entry
+                                        String username = usernameTask.getResult().getString("username");
+                                        tempLeaderboard.get(i).put("userId", username);
+                                    } else {
+                                        // Handle case where the user document is missing or failed
+                                        tempLeaderboard.get(i).put("userId", "Unknown User");
+                                    }
+                                }
+
+                                // Update the global leaderboard
+                                leaderboard.clear();
+                                leaderboard.addAll(tempLeaderboard);
+
+                                // Notify the adapter
+                                ((LeaderboardAdapter) listView.getAdapter()).notifyDataSetChanged();
+                            });
                         } else {
                             Log.w("error", "Error getting documents", task.getException());
                         }
-
                     }
                 });
 

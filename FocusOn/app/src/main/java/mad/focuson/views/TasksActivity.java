@@ -24,6 +24,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -42,11 +44,11 @@ import mad.focuson.interfaces.Views;
 import mad.focuson.views.adapters.TaskRecyclerViewAdapter;
 
 public class TasksActivity extends AppCompatActivity implements Views.TasksActivityView {
+    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     Button btnAddNewTask;
     ImageButton imgBtnBack;
     RecyclerView tasksListView;
     Task taskToEdit;
-    String currentuser="bthn";
 
     ArrayList<Task> tasks = new ArrayList<>();
 
@@ -81,7 +83,7 @@ public class TasksActivity extends AppCompatActivity implements Views.TasksActiv
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
 
-        CollectionReference ref = db.collection("users").document(currentuser).collection("tasks");
+        CollectionReference ref = db.collection("users").document(user.getUid()).collection("tasks");
         new DatabaseAcess().execute(ref);
 
 
@@ -95,7 +97,7 @@ public class TasksActivity extends AppCompatActivity implements Views.TasksActiv
                 // Do something with the result.
                 if(taskToEdit == null){
                     Task newTask = (Task) bundle.getSerializable("newTask");
-                    DocumentReference ref = db.collection("users").document(currentuser).collection("tasks").document();
+                    DocumentReference ref = db.collection("users").document(user.getUid()).collection("tasks").document();
 
                     newTask.setTaskId(ref.getId());
                     tasks.add(newTask);
@@ -143,7 +145,7 @@ public class TasksActivity extends AppCompatActivity implements Views.TasksActiv
                     taskMap.put("deadline", taskToEdit.getDeadline());
 
 
-                    db.collection("users").document(currentuser).collection("tasks").document(taskToEdit.getTaskId())
+                    db.collection("users").document(user.getUid()).collection("tasks").document(taskToEdit.getTaskId())
                             .update(taskMap)
                             .addOnSuccessListener(aVoid -> {
                                 // Handle success
