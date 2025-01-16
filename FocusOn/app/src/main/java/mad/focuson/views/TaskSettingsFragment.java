@@ -192,8 +192,6 @@ public class TaskSettingsFragment extends Fragment {
 
         });
 
-
-
     }
 
     // onAttach onDetach onDestroy

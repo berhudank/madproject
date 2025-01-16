@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -38,19 +39,21 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="My Task" />
+            android:text="My Task"
+            android:textSize="60sp" />
 
         <TextView
             android:id="@+id/txtTimer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="00:00" />
+            android:text="00:00"
+            android:textSize="34sp" />
 
         <ProgressBar
             android:id="@+id/progressBar"
             style="@android:style/Widget.ProgressBar.Horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="24sp"
             android:progress="0" />
 
         <Button
@@ -71,6 +74,7 @@
         android:visibility="invisible"/>
 
     <LinearLayout
+        android:gravity="center"
         android:id="@+id/bottomNavigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -99,7 +103,8 @@
             android:id="@+id/btnTasks"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Tasks" />
+            android:text="Tasks"
+            android:textSize="12sp" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -28,7 +28,7 @@ public class LoginActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        usernameEditText = findViewById(R.id.username);
+        usernameEditText = findViewById(R.id.emailLogin);
         passwordEditText = findViewById(R.id.password);
         keepLoggedInCheckbox = findViewById(R.id.keepLoggedIn);
 

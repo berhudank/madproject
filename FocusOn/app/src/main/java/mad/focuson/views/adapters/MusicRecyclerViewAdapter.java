@@ -2,6 +2,7 @@ package mad.focuson.views.adapters;
 
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,12 +10,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import mad.focuson.R;
-import mad.focuson.views.placeholder.PlaceholderContent.PlaceholderItem;
 
 import java.util.ArrayList;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link PlaceholderItem}.
  * TODO: Replace the implementation with code for your data type.
  */
 public class MusicRecyclerViewAdapter extends RecyclerView.Adapter<MusicRecyclerViewAdapter.ViewHolder> {
@@ -22,6 +21,7 @@ public class MusicRecyclerViewAdapter extends RecyclerView.Adapter<MusicRecycler
     private final ArrayList<Integer> musics;
     private final ArrayList<String> musicNames;
     private final OnMusicClickListener listener;
+    private View selectedRow;
     public MusicRecyclerViewAdapter(OnMusicClickListener listener, ArrayList<Integer> musics, ArrayList<String> musicNames) {
         this.musics = musics;
         this.musicNames = musicNames;
@@ -41,10 +41,16 @@ public class MusicRecyclerViewAdapter extends RecyclerView.Adapter<MusicRecycler
         holder.mId = musics.get(position);
         holder.mMusicNameView.setText(musicNames.get(position));
         // set OnClickListener to this row. When user taps on any region on the row, onClick should be called
-        ((View) holder.mMusicNameView.getParent()).setOnClickListener(new View.OnClickListener() {
+        View rowView = ((View) holder.mMusicNameView.getParent());
+        rowView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 listener.onMusicClick(holder.mId);
+                if(selectedRow != null){
+                    selectedRow.setBackgroundColor(Color.WHITE);
+                }
+                rowView.setBackgroundColor(Color.GREEN);
+                selectedRow = rowView;
             }
         });
 

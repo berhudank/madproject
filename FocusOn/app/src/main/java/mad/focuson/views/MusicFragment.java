@@ -18,7 +18,6 @@ import java.util.ArrayList;
 
 import mad.focuson.R;
 import mad.focuson.views.adapters.MusicRecyclerViewAdapter;
-import mad.focuson.views.placeholder.PlaceholderContent;
 
 /**
  * A fragment representing a list of Items.

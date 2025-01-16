@@ -54,26 +54,31 @@ public class MainActivity extends AppCompatActivity implements Views.MainActivit
     ArrayList<Integer> themes = new ArrayList<>(
             Arrays.asList(
                     R.drawable.theme1,
-                    R.drawable.theme2
-                    /*R.drawable.theme3,
+                    R.drawable.theme2,
+                    R.drawable.theme3,
                     R.drawable.theme4,
                     R.drawable.theme5,
-                    R.drawable.theme6,
-                    R.drawable.theme7,
-                    R.drawable.theme8,
-                    R.drawable.theme9,
-                    R.drawable.theme10*/));
+                    R.drawable.theme6
+                    ));
 
     ArrayList<Integer> musics = new ArrayList<>(
             Arrays.asList(
-                    R.raw.music1,
-                    R.raw.music2
+                    R.raw.cafe_noise,
+                    R.raw.nature,
+                    R.raw.piano,
+                    R.raw.rain_and_thunder,
+                    R.raw.sea,
+                    R.raw.wind
             ));
 
     ArrayList<String> musicNames = new ArrayList<>(
             Arrays.asList(
-                    "music1",
-                    "music2"
+                    "cafe noise",
+                    "nature",
+                    "piano",
+                    "rain and thunder",
+                    "sea",
+                    "wind"
                     ));
 
     @Override

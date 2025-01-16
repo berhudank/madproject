@@ -12,7 +12,6 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
@@ -29,11 +28,11 @@ public class RegisterActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        emailEditText = findViewById(R.id.email);
+        emailEditText = findViewById(R.id.emailRegister);
         passwordEditText = findViewById(R.id.password);
         passwordAgainEditText = findViewById(R.id.passwordAgain);
         nameEditText = findViewById(R.id.name);
-        usernameEditText = findViewById(R.id.username);
+        usernameEditText = findViewById(R.id.emailLogin);
 
         Button signUpButton = findViewById(R.id.signUpButton);
 
