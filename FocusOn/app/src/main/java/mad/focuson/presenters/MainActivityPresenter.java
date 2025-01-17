@@ -28,10 +28,17 @@ public class MainActivityPresenter implements View.OnClickListener {
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     String currentuserPath = "users/" + user.getUid();
     Views.MainActivityView mainActivityView;
-    Task currentTask;
+    private Task currentTask;
     CountDownTimer countDownTimer;
-    boolean isBreak = false;
+    private boolean isBreak = false;
 
+    public Task getCurrentTask() {
+        return currentTask;
+    }
+
+    public boolean isBreak() {
+        return isBreak;
+    }
 
     public MainActivityPresenter(Views.MainActivityView mainActivityView){
         this.mainActivityView = mainActivityView;
@@ -42,7 +49,6 @@ public class MainActivityPresenter implements View.OnClickListener {
             if (countDownTimer != null) {
                 stopTimer();
             } else{
-
                 setNewTimer(currentTask.getRemainingWorkDuration());
                 startTimer();
             }
@@ -62,8 +68,42 @@ public class MainActivityPresenter implements View.OnClickListener {
         currentTask = selectedTask;
     }
 
+    public void handlePreviousTask(Task previousTask, boolean isBreak, int progress){
+        currentTask = previousTask;
+        mainActivityView.updateTaskName(currentTask.getTaskName());
 
-    // this needs to be run on another thread
+        String time;
+        if(previousTask.isFinished()){
+            time = "Task Finished";
+        }
+        else {
+            if(isBreak){
+                long breakTime = currentTask.getBreakTime() / 1000;
+                time = breakTime / 60 + ":" + (breakTime % 60);
+            }
+            else {
+                long workDuration = currentTask.getRemainingWorkDuration()/ 1000;
+                time = workDuration / 60 + ":" + (workDuration % 60);
+            }
+        }
+        mainActivityView.updateTimer(time);
+        mainActivityView.updateProgress(progress);
+
+        this.isBreak = isBreak;
+
+        if(previousTask.isFinished())
+            return;
+
+        if(isBreak){
+            setNewTimer(currentTask.getRemainingBreakTime());
+        }
+        else{
+            setNewTimer(currentTask.getRemainingWorkDuration());
+        }
+
+        startTimer();
+    }
+
     private void setNewTimer(long milliseconds) {
         countDownTimer = new CountDownTimer(milliseconds, 1000) {
 
@@ -103,21 +143,21 @@ public class MainActivityPresenter implements View.OnClickListener {
                     else{
                         mainActivityView.updateTaskName("Task finished");
                         mainActivityView.stopMusic();
-                        currentTask.setTimestamp(Timestamp.now());
-                        db.collection("users").document(user.getUid()).collection("tasks").document(currentTask.getTaskId())
-                                .update("timestamp", currentTask.getTimestamp())
-                                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void unused) {
-                                        Log.d("success", "Task updated successfully!");
-                                    }
-                                })
-                                .addOnFailureListener(new OnFailureListener() {
-                                    @Override
-                                    public void onFailure(@NonNull Exception e) {
-                                        Log.w("error", "Error updating task: " + e.getMessage());
-                                    }
-                                });
+//                        currentTask.setTimestamp(Timestamp.now());
+//                        db.collection("users").document(user.getUid()).collection("tasks").document(currentTask.getTaskId())
+//                                .update("timestamp", currentTask.getTimestamp())
+//                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+//                                    @Override
+//                                    public void onSuccess(Void unused) {
+//                                        Log.d("success", "Task updated successfully!");
+//                                    }
+//                                })
+//                                .addOnFailureListener(new OnFailureListener() {
+//                                    @Override
+//                                    public void onFailure(@NonNull Exception e) {
+//                                        Log.w("error", "Error updating task: " + e.getMessage());
+//                                    }
+//                                });
                         db.collection("leaderboard").whereEqualTo("userId", db.document(currentuserPath))
                                 .get()
                                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -182,10 +222,11 @@ public class MainActivityPresenter implements View.OnClickListener {
                 }
                 startTimer();
             }
+
         };
     }
 
-    private void stopTimer() {
+    public void stopTimer() {
         if (countDownTimer != null) {
             mainActivityView.stopMusic();
             countDownTimer.cancel();

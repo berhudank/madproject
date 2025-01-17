@@ -1,4 +1,4 @@
-package mad.focuson;
+package mad.focuson.views;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,13 +13,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
-import mad.focuson.views.MainActivity;
+import mad.focuson.R;
 
 public class LoginActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private EditText usernameEditText, passwordEditText;
     private CheckBox keepLoggedInCheckbox;
+
+    public void setmAuth(FirebaseAuth mAuth) {
+        this.mAuth = mAuth;
+    }
+
+    public FirebaseAuth getmAuth() {
+        return mAuth;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

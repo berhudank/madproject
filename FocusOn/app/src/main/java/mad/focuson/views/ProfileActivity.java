@@ -1,4 +1,4 @@
-package mad.focuson;
+package mad.focuson.views;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +14,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+
+import mad.focuson.R;
 
 public class ProfileActivity extends AppCompatActivity {
 

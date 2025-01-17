@@ -1,7 +1,6 @@
 package mad.focuson.views;
 
 import android.app.DatePickerDialog;
-import android.icu.util.DateInterval;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -9,7 +8,6 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.widget.SwitchCompat;
 import androidx.fragment.app.Fragment;
 
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +20,6 @@ import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -44,7 +41,7 @@ public class TaskSettingsFragment extends Fragment {
     private Task task;
 
     private Calendar calendar;
-    private SimpleDateFormat dateFormat;
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
     private EditText editTaskName;
     private NumberPicker workDurationPicker;
     private NumberPicker breakDurationPicker;
@@ -105,6 +102,7 @@ public class TaskSettingsFragment extends Fragment {
         seekBarReminder = view.findViewById(R.id.reminderSeekBar);
         txtReminderDays = view.findViewById(R.id.reminderDaysTextView);
 
+
         // Setup NumberPickers
         workDurationPicker.setMinValue(1);
         workDurationPicker.setMaxValue(60);
@@ -120,7 +118,6 @@ public class TaskSettingsFragment extends Fragment {
         // in the EditText
         // Require a Task Name
 
-        dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 
         calendar = Calendar.getInstance();
         // cannot choose any date before tomorrow

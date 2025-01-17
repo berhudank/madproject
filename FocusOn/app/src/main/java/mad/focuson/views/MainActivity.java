@@ -31,7 +31,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import mad.focuson.ProfileActivity;
 import mad.focuson.R;
 import mad.focuson.Task;
 import mad.focuson.interfaces.Views;
@@ -119,6 +118,18 @@ public class MainActivity extends AppCompatActivity implements Views.MainActivit
 
         presenter = new MainActivityPresenter(this);
 
+        if(savedInstanceState != null){
+            Task previousTask = (Task) savedInstanceState.getSerializable("task");
+            if(previousTask != null) {
+                boolean isBreak = savedInstanceState.getBoolean("isBreak");
+                int progress = savedInstanceState.getInt("progress");
+                selectedMusic = savedInstanceState.getInt("selectedMusic");
+                presenter.handlePreviousTask(previousTask, isBreak, progress);
+                startMusic();
+            }
+        }
+
+
         Listener listener = new Listener();
 
         LinearLayout bottomNavigation = findViewById(R.id.bottomNavigation);
@@ -145,6 +156,21 @@ public class MainActivity extends AppCompatActivity implements Views.MainActivit
         super.onStop();
         if(!keepMeLoggedIn)
             FirebaseAuth.getInstance().signOut();
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        presenter.stopTimer();
+        Task currentTask = presenter.getCurrentTask();
+        boolean isBreak = presenter.isBreak();
+        int progress = progressBar.getProgress();
+
+        outState.putSerializable("task", currentTask);
+        outState.putInt("progress", progress);
+        outState.putInt("selectedMusic", selectedMusic);
+        outState.putBoolean("isBreak", isBreak);
     }
 
     @Override

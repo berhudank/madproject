@@ -1,4 +1,4 @@
-package mad.focuson;
+package mad.focuson.views;
 
 import android.os.Bundle;
 import android.widget.Button;
@@ -15,6 +15,8 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
+
+import mad.focuson.R;
 
 public class RegisterActivity extends AppCompatActivity {
 
